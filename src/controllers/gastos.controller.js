@@ -15,6 +15,7 @@ const createGastoHandler = async (req, res) => {
       .status(201)
       .json({ message: "Gasto creado exitosamente", gastoId: result.insertId });
   } catch (error) {
+
     res.status(500).json({ error: error.message });
   }
 };

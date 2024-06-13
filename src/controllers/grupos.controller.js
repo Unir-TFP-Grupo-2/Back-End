@@ -65,8 +65,15 @@ const getGroupByIdHandler = async (req, res) => {
 };
 
 const getAllGroupsHandler = async (req, res) => {
+
   try {
-    const groups = await getAllGroupsUser();
+    const userId = req.userId;
+    const groups = await getAllGroupsUser(userId);
+    
+     if(groups.length === 0){
+      return res.status(204).json({message:"No hay grupos asociados a este usuario"})
+    }
+
     res.json(groups);
   } catch (error) {
     res.status(500).json({ error: error.message });

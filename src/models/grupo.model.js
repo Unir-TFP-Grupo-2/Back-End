@@ -65,7 +65,7 @@ const getAllGroupsUser = async (id) => {
     JOIN 
         proyecto.grupo g ON gm.group_id = g.group_id
     WHERE 
-        u.user_id = ?;`[id]);
+        u.user_id = ?;`,[id]);
   return rows;
 };
 
