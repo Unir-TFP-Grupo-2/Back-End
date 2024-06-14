@@ -1,4 +1,4 @@
-const db = global.db;
+const db = require("../config/db");
 
 const createGroup = async (groupData) => {
   const [result] = await db.query(
@@ -52,7 +52,7 @@ const getAllGroups = async () => {
 };
 
 const getAllGroupsUser = async (id) => {
-  const [rows] = await db.query(`
+  const [rows] = await global.db.query(`
     SELECT 
         g.group_id,
         g.title,
