@@ -24,24 +24,30 @@ const addGroupMember = async (groupId, userId, percentage) => {
 
 const getGroupById = async (id) => {
   const [group] = await db.query(`SELECT * FROM grupo WHERE group_id = ?`, [id]);
-  const [users] = await db.query(`SELECT name,lastname,email,photo FROM proyecto.usuario WHERE user_id IN (SELECT user_id FROM proyecto.grupo_miembro WHERE group_id = ?);`, [id]);
+  const [users] = await db.query(`SELECT user_id,name,lastname,email,photo FROM proyecto.usuario WHERE user_id IN (SELECT user_id FROM proyecto.grupo_miembro WHERE group_id = ?);`, [id]);
 
-  group[0]['users'] = users;
-  const arrayUsers = group[0]['users'];
+  group[0]['participants'] = users;
+  const arrayUsers = group[0]['participants'];
+  const [gastos] = await db.query(`SELECT u.name, u.lastname, gm.* FROM proyecto.gasto gm JOIN proyecto.usuario u ON gm.user_id_gasto = u.user_id where group_id`, [id]);
+  group[0]['gastos'] = gastos;
 
   // Usamos un bucle for...of para manejar promesas correctamente
   for (const element of arrayUsers) {
 
     // Obtenemos los gastos del usuario de forma asíncrona
-    const [gastos] = await db.query(`SELECT e.*
-    FROM proyecto.grupo_miembro gm
-    JOIN proyecto.usuario u ON gm.user_id = u.user_id
-    JOIN proyecto.gasto e ON e.user_id_gasto = u.user_id
-    WHERE e.group_id = ? AND e.user_id_gasto = ?`, [id, element['user_id']]);
+    const [gastos_user] = await db.query(`SELECT e.*
+      FROM proyecto.grupo_miembro gm
+      JOIN proyecto.usuario u ON gm.user_id = u.user_id
+      JOIN proyecto.gasto e ON e.user_id_gasto = u.user_id
+      WHERE e.group_id = ? AND e.user_id_gasto = ?`, [id, element['user_id']]);
 
+
+    console.log(gastos);
     // Añadimos los gastos al usuario correspondiente
-    element['gastos'] = gastos;
+    element['gastos_user'] = gastos_user;
   }
+  const [total_amount] = await db.query(`SELECT SUM(amount) AS total_amount FROM proyecto.gasto WHERE group_id = ?`, [id]);
+  group[0]['total_amount'] = total_amount[0]['total_amount'];
 
   return group[0];
 };
