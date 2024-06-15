@@ -1,9 +1,9 @@
 const db = require("../config/db");
 
-const createGasto = async (groupId, amount, description) => {
-  const [result] = await db.query(
-    "INSERT INTO gasto (group_id, amount, description) VALUES (?, ?, ?)",
-    [groupId, amount, description]
+const createGasto = async (expenseData) => {
+  const [result] = await global.db.query(
+    "INSERT INTO gasto (user_id_gasto, group_id, amount, description) VALUES (?, ?, ?, ?)",
+    [expenseData.user_id_gasto, expenseData.group_id, expenseData.amount, expenseData.description]
   );
   return result;
 };

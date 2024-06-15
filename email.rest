@@ -1,0 +1,13 @@
+@PORT = 3000
+@HOST = http://localhost:{{PORT}}
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0NTc2Mjg4NH0.m5f5C4hsDFo5xgnIS6umTzXz3IAYjtwa6G0PL5U7kO4
+
+### Enviar correo electrónico
+POST {{HOST}}/api/email/send
+Content-Type: application/json
+
+{
+  "to": "diego.or@gmail.com",
+  "subject": "Asunto del correo",
+  "text": "Este es el cuerpo del correo."
+}

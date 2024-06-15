@@ -1,4 +1,4 @@
-const db = global.db;
+const db = require("../config/db");
 
 const createGroup = async (groupData) => {
   const [result] = await db.query(
@@ -58,7 +58,7 @@ const getAllGroups = async () => {
 };
 
 const getAllGroupsUser = async (id) => {
-  const [rows] = await db.query(`
+  const [rows] = await global.db.query(`
     SELECT 
         g.group_id,
         g.title,
@@ -71,7 +71,7 @@ const getAllGroupsUser = async (id) => {
     JOIN 
         proyecto.grupo g ON gm.group_id = g.group_id
     WHERE 
-        u.user_id = ?;`[id]);
+        u.user_id = ?;`,[id]);
   return rows;
 };
 
