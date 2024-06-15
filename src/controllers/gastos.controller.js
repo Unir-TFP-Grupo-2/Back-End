@@ -6,21 +6,23 @@ const {
   deleteGasto,
 } = require("../models/gasto.model");
 
+
 const createGastoHandler = async (req, res) => {
- try {
+  try {
     console.log("Contenido completo de req.body:", JSON.stringify(req.body, null, 2));
 
-    const expense = await createGasto(req.body);
-    if (!expense?.insertId) {
+    const result = await createGasto(req.body);
+    if (!result.success) {
       throw new Error('Error creando el gasto');
     }
 
-    console.log("Gasto creado:", expense);
+    console.log("Gasto creado:", result);
+    res.status(200).json({ success: true, expense_id: result.expenseId });
   } catch (error) {
     console.error("Error en createGastoHandler:", error);
     res.status(500).json({ error: error.message });
   }
-}
+};
 
 const getGastoByIdHandler = async (req, res) => {
   try {

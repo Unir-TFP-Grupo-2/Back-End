@@ -45,10 +45,13 @@ const registerUser = async (req, res) => {
 
 const getAllUsersHandler = async (req, res) => {
   try {
-    const users = await getAllUsers();
-    res.status(200).json(users);
+    const { groupId } = req.params;  // Extraer groupId de los parámetros de la URL
+    console.log(groupId);  // Imprimir el groupId para depuración
+    const users = await getAllUsersByGroupId(groupId);  // Llamar a la función para obtener los usuarios
+    res.json(users);  // Enviar la respuesta en formato JSON
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);  // Imprimir cualquier error en la consola
+    res.status(500).json({ message: 'Error al obtener los usuarios del grupo' });  // Enviar una respuesta de error
   }
 };
 
