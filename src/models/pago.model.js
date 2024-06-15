@@ -1,4 +1,4 @@
-const db = require("../config/db");
+//const db = require("../config/db");
 
 const createPago = async (expenseId, userId, amount) => {
   const [result] = await db.query(

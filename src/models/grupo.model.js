@@ -1,4 +1,4 @@
-const db = require("../config/db");
+//const db = require("../config/db");
 
 const createGroup = async (groupData) => {
   const [result] = await db.query(
