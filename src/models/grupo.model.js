@@ -35,11 +35,9 @@ const getGroupById = async (id) => {
   for (const element of arrayUsers) {
 
     // Obtenemos los gastos del usuario de forma asíncrona
-    const [gastos_user] = await db.query(`SELECT e.*
-      FROM proyecto.grupo_miembro gm
-      JOIN proyecto.usuario u ON gm.user_id = u.user_id
-      JOIN proyecto.gasto e ON e.user_id_gasto = u.user_id
-      WHERE e.group_id = ? AND e.user_id_gasto = ?`, [id, element['user_id']]);
+    const [gastos_user] = await db.query(`SELECT * FROM proyecto.gasto gm
+      JOIN proyecto.usuario u ON gm.user_id_gasto = u.user_id
+      WHERE gm.group_id = ? AND gm.user_id_gasto = ?`, [id, element['user_id']]);
 
 
     console.log(gastos);
