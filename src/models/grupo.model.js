@@ -57,27 +57,51 @@ const getAllGroups = async () => {
 
 const getAllGroupsUser = async (id) => {
   const [rows] = await global.db.query(`
-  SELECT 
-        g.group_id,
-        g.title,
-        g.description,
-        g.creation_date,
-        IFNULL((SELECT SUM(e.amount) 
-                FROM proyecto.gasto e 
-                WHERE e.group_id = g.group_id), 0) as total_amount,
-        COUNT(DISTINCT gm2.user_id) as num_participants
-    FROM 
-        proyecto.usuario u
-    JOIN 
-        proyecto.grupo_miembro gm ON u.user_id = gm.user_id
-    JOIN 
-        proyecto.grupo g ON gm.group_id = g.group_id
-    LEFT JOIN 
-        proyecto.grupo_miembro gm2 ON g.group_id = gm2.group_id
-    WHERE 
-        u.user_id = ?
-    GROUP BY 
-        g.group_id, g.title, g.description, g.creation_date;`,[id]);
+ SELECT 
+    g.group_id,
+    g.title,
+    g.description,
+    g.creation_date,
+    IFNULL((SELECT SUM(e.amount) 
+            FROM proyecto.gasto e 
+            WHERE e.group_id = g.group_id), 0) AS total_amount,
+    COUNT(DISTINCT gm2.user_id) AS num_participants,
+    IFNULL((SELECT SUM(e.amount)
+            FROM proyecto.gasto e
+            WHERE e.group_id = g.group_id
+              AND e.user_id_gasto = u.user_id), 0) AS user_inserted_amount,
+    IFNULL((SELECT SUM(p.amount)
+            FROM proyecto.pago p
+            JOIN proyecto.gasto e ON p.expense_id = e.expense_id
+            WHERE e.group_id = g.group_id
+              AND p.user_id = u.user_id), 0) AS user_paid_amount,
+    IFNULL((SELECT SUM(p.amount)
+            FROM proyecto.pago p
+            JOIN proyecto.gasto e ON p.expense_id = e.expense_id
+            WHERE e.group_id = g.group_id
+              AND p.user_id_gasto = u.user_id), 0) AS user_gasto_amount,
+    IFNULL((SELECT SUM(p.amount)
+            FROM proyecto.pago p
+            JOIN proyecto.gasto e ON p.expense_id = e.expense_id
+            WHERE e.group_id = g.group_id
+              AND p.user_id = u.user_id), 0) - IFNULL((SELECT SUM(p.amount)
+            FROM proyecto.pago p
+            JOIN proyecto.gasto e ON p.expense_id = e.expense_id
+            WHERE e.group_id = g.group_id
+              AND p.user_id_gasto = u.user_id), 0) AS balance_difference
+FROM 
+    proyecto.usuario u
+JOIN 
+    proyecto.grupo_miembro gm ON u.user_id = gm.user_id
+JOIN 
+    proyecto.grupo g ON gm.group_id = g.group_id
+LEFT JOIN 
+    proyecto.grupo_miembro gm2 ON g.group_id = gm2.group_id
+WHERE 
+    u.user_id = ?
+GROUP BY 
+    g.group_id, g.title, g.description, g.creation_date;
+`,[id]);
   return rows;
 };
 
