@@ -1,6 +1,6 @@
 @PORT = 3000
 @HOST = http://localhost:{{PORT}}
-@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTcxODE2MjkwMywiZXhwIjoxNzE4MjQ5MzAzfQ.vLep-pMYsMv_Rm1E5SRlQJNlw6kJZYK3p5qYcRM3L7g
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTcxODY0NDk0MCwiZXhwIjoxNzE4NzMxMzQwfQ.NtGXpWodY8vC-Sm6uqR6x3WmTFHLUCq99zu09a2-hzE
 
 ### Registro de un nuevo usuario independiente
 POST {{HOST}}/api/usuarios/register
