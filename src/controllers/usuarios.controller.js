@@ -121,16 +121,22 @@ const loginUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
+    console.log("Usuario encontrado:", user);
     const passwordIsValid = bcrypt.compareSync(password, user.password);
     if (!passwordIsValid) {
       return res.status(401).json({ message: "Contraseña inválida" });
     }
     const token = generateToken(user);
-    res.status(200).json({ token });
+    if (!user.user_id) {
+      return res.status(500).json({ message: "Error interno, el ID del usuario no se encontró" });
+    }
+    res.status(200).json({ token, user: user.user_id }); 
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 const addUserToGroup = async (req, res) => {
   const { groupId, paymentPercentage } = req.body;
