@@ -22,14 +22,17 @@ const getFriendsHandler = async (req, res) => {
 const createAmigoHandler = async (req, res) => {
   try {
     const { userId, friendEmail } = req.body;
+    console.log('Datos recibidos en el controlador:', { userId, friendEmail });
+
     if (!userId || !friendEmail) {
+      console.log('Datos faltantes:', { userId, friendEmail });
       return res.status(400).json({ message: "Faltan datos requeridos" });
     }
 
     const result = await addFriend(userId, friendEmail);
-
     res.status(201).json({ message: "Amigo agregado correctamente", friendId: result.friendId });
   } catch (error) {
+    console.error('Error añadiendo amigo:', error.message);
     res.status(500).json({ error: error.message });
   }
 };

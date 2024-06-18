@@ -21,36 +21,39 @@ const getFriendsAndCommonGroups = async (userId) => {
 };
 
 const addFriend = async (userId, friendEmail) => {
-  // Verifica la existencia del userId en la tabla usuario
-  const [user] = await global.db.query(`
-    SELECT user_id FROM usuario WHERE user_id = ?
-  `, [userId]);
+  try {
+    const [user] = await global.db.query(`
+      SELECT user_id FROM usuario WHERE user_id = ?
+    `, [userId]);
 
-  if (user.length === 0) {
-    throw new Error('El usuario con el userId proporcionado no existe');
+    if (user.length === 0) {
+      console.log('Usuario no encontrado:', userId);
+      throw new Error('El usuario con el userId proporcionado no existe');
+    }
+
+    const [friend] = await global.db.query(`
+      SELECT user_id FROM usuario WHERE email = ?
+    `, [friendEmail]);
+
+    if (friend.length === 0) {
+      console.log('Amigo no encontrado por email:', friendEmail);
+      throw new Error('No se encontró un usuario con ese email');
+    }
+
+    const friendId = friend[0].user_id;
+
+    const [result] = await global.db.query(`
+      INSERT INTO amigos (user_id, friend_id, friendship_date)
+      VALUES (?, ?, NOW());
+    `, [userId, friendId]);
+
+    console.log('Resultado de la inserción en amigos:', result);
+
+    return { userId, friendId };
+  } catch (error) {
+    console.error('Error en addFriend:', error.message);
+    throw error;
   }
-  // Obtiene el user_id del amigo basado en el email
-  const [friend] = await global.db.query(`
-    SELECT user_id FROM usuario WHERE email = ?
-  `, [friendEmail]);
-
-  console.log('Resultado de la consulta SELECT user_id FROM usuario WHERE email = ?:', friend);
-
-  if (friend.length === 0) {
-    throw new Error('No se encontró un usuario con ese email');
-  }
-
-  const friendId = friend[0].user_id;
-
-  // Insertar la relación de amistad en la tabla amigos
-  const [result] = await global.db.query(`
-    INSERT INTO amigos (user_id, friend_id, friendship_date)
-    VALUES (?, ?, NOW());
-  `, [userId, friendId]);
-
-  console.log('Resultado de la inserción en amigos:', result);
-  
-  return { userId, friendId };
 };
 
 const removeFriend = async (userId, friendId) => {
