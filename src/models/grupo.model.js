@@ -28,7 +28,7 @@ const getGroupById = async (id) => {
 
   group[0]['participants'] = users;
   const arrayUsers = group[0]['participants'];
-  const [gastos] = await db.query(`SELECT u.name, u.lastname, gm.* FROM proyecto.gasto gm JOIN proyecto.usuario u ON gm.user_id_gasto = u.user_id where group_id`, [id]);
+  const [gastos] = await db.query(`SELECT u.name, u.lastname, gm.* FROM proyecto.gasto gm JOIN proyecto.usuario u ON gm.user_id_gasto = u.user_id where group_id = ?`, [id]);
   group[0]['gastos'] = gastos;
 
   // Usamos un bucle for...of para manejar promesas correctamente
