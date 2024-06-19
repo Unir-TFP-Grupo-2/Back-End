@@ -8,6 +8,9 @@ const transporter = nodemailer.createTransport({
     user: "webmaster@ecuadana.com", // Reemplaza con tu correo
     pass: "Usuario123*", // Reemplaza con tu contraseña
   },
+  tls: {
+    rejectUnauthorized: false,
+  },
 });
 
 module.exports = transporter;
