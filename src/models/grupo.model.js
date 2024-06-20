@@ -2,8 +2,8 @@
 
 const createGroup = async (groupData) => {
   const [result] = await db.query(
-    `INSERT INTO grupo (title, description, creation_date) VALUES (?, ?, NOW())`,
-    [groupData.title, groupData.description]
+    `INSERT INTO grupo (title, description, creator_id, creation_date) VALUES (?, ?, ?, NOW())`,
+    [groupData.title, groupData.description, groupData.creator_id]
   );
   return result;
 };
@@ -60,6 +60,7 @@ const getAllGroupsUser = async (id) => {
  SELECT 
     g.group_id,
     g.title,
+    g.creator_id,
     g.description,
     g.creation_date,
     IFNULL((SELECT SUM(e.amount) 
