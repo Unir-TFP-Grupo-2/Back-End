@@ -1,7 +1,6 @@
 const bcrypt = require("bcryptjs");
 const {
   createUser,
-  addGroupMember,
   getAllUsers,
   getUserById,
   updateUser,
@@ -32,7 +31,10 @@ const registerUser = async (req, res) => {
         if (!groupExistsResult) {
           return res.status(400).json({ message: "El grupo no existe" });
         }
-        await addGroupMember(groupId, result.insertId, paymentPercentage);
+        await db.query(
+          "INSERT INTO grupo_miembro (group_id, user_id, percentage) VALUES (?, ?, ?)",
+          [groupId, result.insertId, paymentPercentage]
+        );
       }
       res.status(201).json({ message: "Usuario registrado exitosamente" });
     } else {
@@ -45,13 +47,11 @@ const registerUser = async (req, res) => {
 
 const getAllUsersHandler = async (req, res) => {
   try {
-    const { groupId } = req.params;  // Extraer groupId de los parámetros de la URL
-    console.log(groupId);  // Imprimir el groupId para depuración
-    const users = await getAllUsersByGroupId(groupId);  // Llamar a la función para obtener los usuarios
-    res.json(users);  // Enviar la respuesta en formato JSON
+    const users = await getAllUsers();
+    res.status(200).json(users); // Enviar la respuesta en formato JSON
   } catch (error) {
-    console.error(error);  // Imprimir cualquier error en la consola
-    res.status(500).json({ message: 'Error al obtener los usuarios del grupo' });  // Enviar una respuesta de error
+    console.error("Error al obtener los usuarios:", error); // Imprimir cualquier error en la consola
+    res.status(500).json({ message: "Error al obtener los usuarios" }); // Enviar una respuesta de error
   }
 };
 
@@ -87,6 +87,7 @@ const updateUserHandler = async (req, res) => {
     payment_percentage,
     debt,
   };
+
   if (password) {
     updateData.password = bcrypt.hashSync(password, 8);
   }
@@ -128,9 +129,11 @@ const loginUser = async (req, res) => {
     }
     const token = generateToken(user);
     if (!user.user_id) {
-      return res.status(500).json({ message: "Error interno, el ID del usuario no se encontró" });
+      return res
+        .status(500)
+        .json({ message: "Error interno, el ID del usuario no se encontró" });
     }
-    res.status(200).json({ token, user: user.user_id }); 
+    res.status(200).json({ token, user: user.user_id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -145,7 +148,10 @@ const addUserToGroup = async (req, res) => {
     if (!groupExistsResult) {
       return res.status(400).json({ message: "El grupo no existe" });
     }
-    await addGroupMember(groupId, userId, paymentPercentage);
+    await db.query(
+      "INSERT INTO grupo_miembro (group_id, user_id, percentage) VALUES (?, ?, ?)",
+      [groupId, userId, paymentPercentage]
+    );
     res.status(200).json({ message: "Usuario asignado al grupo exitosamente" });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -187,5 +193,5 @@ module.exports = {
   loginUser,
   addUserToGroup,
   removeUserFromGroup,
-  getEmailByUserIdHandler
+  getEmailByUserIdHandler,
 };

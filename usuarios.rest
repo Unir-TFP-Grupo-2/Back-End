@@ -1,6 +1,6 @@
 @PORT = 3000
 @HOST = http://localhost:{{PORT}}
-@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTcxODY0NDk0MCwiZXhwIjoxNzE4NzMxMzQwfQ.NtGXpWodY8vC-Sm6uqR6x3WmTFHLUCq99zu09a2-hzE
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTcxODkxMTE5OCwiZXhwIjoxNzE4OTk3NTk4fQ.Ut9aKzX52Pq7JTzfjMJih7LEtaXvXORAdVesF8n5tDM
 
 ### Registro de un nuevo usuario independiente
 POST {{HOST}}/api/usuarios/register
@@ -33,7 +33,7 @@ GET {{HOST}}/api/usuarios/1
 Authorization: Bearer {{TOKEN}}
 
 ### Actualizar un usuario
-PUT {{HOST}}/api/usuarios/1
+PUT {{HOST}}/api/usuarios/2
 Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
 

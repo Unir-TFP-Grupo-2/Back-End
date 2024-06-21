@@ -6,6 +6,10 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
   database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  connectTimeout: 10000, // Aumenta el tiempo de espera a 10 segundos
 });
 
 global.db = pool.promise();
@@ -19,3 +23,5 @@ pool.getConnection((err, connection) => {
     connection.release();
   }
 });
+
+module.exports = pool.promise();

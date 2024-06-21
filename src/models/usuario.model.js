@@ -1,4 +1,5 @@
-//const db = require('../config/db');
+const db = require("../config/db");
+const bcrypt = require("bcryptjs");
 
 const createUser = async (name, lastname, email, photo, hashedPassword) => {
   const [result] = await db.query(
@@ -7,8 +8,6 @@ const createUser = async (name, lastname, email, photo, hashedPassword) => {
   );
   return result;
 };
-
-
 
 const removeGroupMember = async (groupId, userId) => {
   const [result] = await db.query(
@@ -64,12 +63,12 @@ const deleteUser = async (id) => {
 };
 
 const getUserByEmail = async (email) => {
-  const [rows] = await global.db.query("SELECT * FROM usuario WHERE email = ?", [
-    email,
-  ]);
+  const [rows] = await global.db.query(
+    "SELECT * FROM usuario WHERE email = ?",
+    [email]
+  );
   return rows[0];
 };
-
 
 const groupExists = async (groupId) => {
   const [rows] = await db.query("SELECT * FROM grupo WHERE group_id = ?", [
