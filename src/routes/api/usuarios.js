@@ -7,6 +7,7 @@ router.post("/register", userController.registerUser); // Ruta de registro
 router.post("/login", userController.loginUser); // Ruta de login
 router.get("/", verifyToken, userController.getAllUsersHandler);
 router.get("/:id", verifyToken, userController.getUserByIdHandler);
+router.get("/:id/email", verifyToken, userController.getEmailByUserIdHandler);
 router.put("/:id", verifyToken, userController.updateUserHandler);
 router.delete("/:id", verifyToken, isAdmin, userController.deleteUserHandler);
 

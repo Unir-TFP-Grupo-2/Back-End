@@ -32,38 +32,6 @@ const createGasto = async (expenseData, retryCount = 3) => {
     }
   }
 
- /*  try {
-    console.log('Iniciando transacción');
-    await global.db.query('START TRANSACTION');
-
-    console.log('Insertando gasto');
-    const [result] = await global.db.query(
-      "INSERT INTO gasto (user_id_gasto, group_id, amount, description) VALUES (?, ?, ?, ?)",
-      [expenseData.user_id_gasto, expenseData.group_id, expenseData.amount, expenseData.description]
-    );
-
-    const expenseId = result.insertId;
-    console.log('Gasto insertado con ID:', expenseId);
-
-    console.log('Insertando pagos');
-    const paymentPromises = expenseData.participants.map(userId => 
-      global.db.query(
-        "INSERT INTO pago (expense_id, user_id, amount) VALUES (?, ?, ?)",
-        [expenseId, userId, expenseData.amount / expenseData.participants.length]
-      )
-    );
-    await Promise.all(paymentPromises);
-
-    await global.db.query('COMMIT');
-    console.log('Transacción confirmada');
-
-    return { success: true, expenseId };
-  } catch (error) {
-    await global.db.query('ROLLBACK');
-    console.error('Transacción revertida debido a error:', error);
-    throw error;
-  } */
-
 
 const getGastoById = async (id) => {
   const [rows] = await db.query("SELECT * FROM gasto WHERE expense_id = ?", [

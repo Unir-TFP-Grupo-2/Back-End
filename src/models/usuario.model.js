@@ -64,11 +64,12 @@ const deleteUser = async (id) => {
 };
 
 const getUserByEmail = async (email) => {
-  const [rows] = await db.query("SELECT * FROM usuario WHERE email = ?", [
+  const [rows] = await global.db.query("SELECT * FROM usuario WHERE email = ?", [
     email,
   ]);
   return rows[0];
 };
+
 
 const groupExists = async (groupId) => {
   const [rows] = await db.query("SELECT * FROM grupo WHERE group_id = ?", [

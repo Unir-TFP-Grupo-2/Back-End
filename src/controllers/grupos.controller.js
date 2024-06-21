@@ -15,6 +15,10 @@ const createGroupHandler = async (req, res) => {
   try {
     console.log("Contenido completo de req.body:", JSON.stringify(req.body, null, 2));
 
+    if (!req.body.title) {
+      throw new Error("El campo 'title' es requerido");
+    }
+
     const group = await createGroup(req.body);
     if (!group?.insertId) {
       throw new Error('Error creando el grupo');
@@ -32,8 +36,7 @@ const createGroupHandler = async (req, res) => {
         console.error(`No se encontró userId para el email: ${email}`);
         continue;
       }
-
-      console.log('Parámetros para añadir miembro:', { group_id, userId, percentage });
+      
       const addMemberResult = await addGroupMember(group_id, userId, percentage);
 
       if (!addMemberResult?.affectedRows) {

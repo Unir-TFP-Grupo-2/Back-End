@@ -2,7 +2,7 @@ const db = require("../config/db");
 
 const getFriendsAndCommonGroups = async (userId) => {
   const [rows] = await global.db.query(`
-    SELECT u.name, u.lastname, u.email, 
+    SELECT u.user_id AS _id, u.name, u.lastname, u.email, 
            COALESCE(g.total_grupos_comunes, 0) AS total_grupos_comunes
     FROM amigos a
     JOIN usuario u ON a.friend_id = u.user_id
@@ -16,11 +16,26 @@ const getFriendsAndCommonGroups = async (userId) => {
     WHERE a.user_id = ?
     GROUP BY u.user_id, u.name, u.lastname, u.email;
   `, [userId, userId]);
-  
+
   return rows;
 };
 
-const addFriend = async (userId, friendEmail) => {
+
+
+const getUserByEmail = async (email) => {
+  try {
+    const [user] = await global.db.query(`
+      SELECT user_id FROM usuario WHERE email = ?
+    `, [email]);
+
+    return user.length > 0 ? user[0] : null;
+  } catch (error) {
+    console.error('Error en getUserByEmail:', error.message);
+    throw error;
+  }
+};
+
+const addFriend = async (userId, friendId) => {
   try {
     const [user] = await global.db.query(`
       SELECT user_id FROM usuario WHERE user_id = ?
@@ -30,17 +45,6 @@ const addFriend = async (userId, friendEmail) => {
       console.log('Usuario no encontrado:', userId);
       throw new Error('El usuario con el userId proporcionado no existe');
     }
-
-    const [friend] = await global.db.query(`
-      SELECT user_id FROM usuario WHERE email = ?
-    `, [friendEmail]);
-
-    if (friend.length === 0) {
-      console.log('Amigo no encontrado por email:', friendEmail);
-      throw new Error('No se encontró un usuario con ese email');
-    }
-
-    const friendId = friend[0].user_id;
 
     const [result] = await global.db.query(`
       INSERT INTO amigos (user_id, friend_id, friendship_date)
@@ -66,6 +70,7 @@ const removeFriend = async (userId, friendId) => {
 
 module.exports = {
   getFriendsAndCommonGroups,
+  getUserByEmail,
   addFriend,
   removeFriend
 };
