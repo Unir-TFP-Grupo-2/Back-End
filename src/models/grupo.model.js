@@ -2,8 +2,8 @@
 
 const createGroup = async (groupData) => {
   const [result] = await db.query(
-    `INSERT INTO grupo (title, description, creation_date) VALUES (?, ?, NOW())`,
-    [groupData.title, groupData.description]
+    `INSERT INTO grupo (title, description, creator_id, creation_date) VALUES (?, ?, ?, NOW())`,
+    [groupData.title, groupData.description, groupData.creator_id]
   );
   return result;
 };
@@ -24,28 +24,7 @@ const addGroupMember = async (groupId, userId, percentage) => {
 
 const getGroupById = async (id) => {
   const [group] = await db.query(`SELECT * FROM grupo WHERE group_id = ?`, [id]);
-  const [users] = await db.query(`SELECT 
-    u.user_id,
-    u.name,
-    u.lastname,
-    u.email,
-    u.photo,
-    COALESCE(SUM(g.amount), 0) AS total_amount
-FROM 
-    proyecto.usuario u
-LEFT JOIN 
-    proyecto.grupo_miembro gm ON u.user_id = gm.user_id
-LEFT JOIN 
-    proyecto.gasto g ON u.user_id = g.user_id_gasto AND g.group_id = gm.group_id
-WHERE 
-    gm.group_id = 1
-GROUP BY 
-    u.user_id,
-    u.name,
-    u.lastname,
-    u.email,
-    u.photo;
-;`, [id]);
+  const [users] = await db.query(`SELECT user_id,name,lastname,email,photo FROM proyecto.usuario WHERE user_id IN (SELECT user_id FROM proyecto.grupo_miembro WHERE group_id = ?);`, [id]);
 
   group[0]['participants'] = users;
   const arrayUsers = group[0]['participants'];
@@ -59,12 +38,12 @@ GROUP BY
     const [gastos_user] = await db.query(`SELECT * FROM proyecto.gasto gm
       JOIN proyecto.usuario u ON gm.user_id_gasto = u.user_id
       WHERE gm.group_id = ? AND gm.user_id_gasto = ?`, [id, element['user_id']]);
+
+
+    console.log(gastos);
     // Añadimos los gastos al usuario correspondiente
     element['gastos_user'] = gastos_user;
   }
-
-  console.log(gastos);
-
   const [total_amount] = await db.query(`SELECT SUM(amount) AS total_amount FROM proyecto.gasto WHERE group_id = ?`, [id]);
   group[0]['total_amount'] = total_amount[0]['total_amount'];
 
@@ -81,6 +60,7 @@ const getAllGroupsUser = async (id) => {
  SELECT 
     g.group_id,
     g.title,
+    g.creator_id,
     g.description,
     g.creation_date,
     IFNULL((SELECT SUM(e.amount) 
@@ -122,7 +102,7 @@ WHERE
     u.user_id = ?
 GROUP BY 
     g.group_id, g.title, g.description, g.creation_date;
-`, [id]);
+`,[id]);
   return rows;
 };
 
