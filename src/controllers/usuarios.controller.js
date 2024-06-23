@@ -83,6 +83,7 @@ const updateUserHandler = async (req, res) => {
     lastname,
     email,
     photo,
+    password,
     group_id,
     payment_percentage,
     debt,
