@@ -62,11 +62,25 @@ const getGroupById = async (id) => {
   group[0]['participants'] = users;
   const arrayUsers = group[0]['participants'];
   const [gastos] = await db.query(`SELECT u.name, u.lastname, gm.* FROM proyecto.gasto gm JOIN proyecto.usuario u ON gm.user_id_gasto = u.user_id where group_id = ?`, [id]);
-  const [pagos] = await db.query(`SELECT pago.*
-FROM proyecto.pago AS pago
-JOIN proyecto.gasto AS gasto
-ON pago.expense_id = gasto.expense_id
-WHERE gasto.group_id = ?`, [id]);
+  const [pagos] = await db.query(`SELECT 
+    pago.payment_id, 
+    pago.expense_id, 
+    payer.name AS payer_name, 
+    payer.lastname AS payer_lastname, 
+    gasto_user.name AS gasto_user_name, 
+    gasto_user.lastname AS gasto_user_lastname, 
+    pago.amount, 
+    pago.paid_at
+FROM 
+    proyecto.pago AS pago
+JOIN 
+    proyecto.gasto AS gasto ON pago.expense_id = gasto.expense_id
+JOIN 
+    proyecto.usuario AS payer ON pago.user_id = payer.user_id
+JOIN 
+    proyecto.usuario AS gasto_user ON gasto.user_id_gasto = gasto_user.user_id
+WHERE 
+    gasto.group_id = ?`, [id]);
   group[0]['gastos'] = gastos;
   group[0]['pagos'] = pagos;
 
