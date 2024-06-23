@@ -1,36 +1,44 @@
 const db = require("../config/db");
 
 const createGasto = async (expenseData, retryCount = 3) => {
-    try {
-      console.log('Insertando gasto');
-      const [result] = await global.db.query(
-        "INSERT INTO gasto (user_id_gasto, group_id, amount, description) VALUES (?, ?, ?, ?)",
-        [expenseData.user_id_gasto, expenseData.group_id, expenseData.amount, expenseData.description]
-      );
+  try {
+    console.log('Insertando gasto');
+    const [result] = await global.db.query(
+      "INSERT INTO gasto (user_id_gasto, group_id, amount, description) VALUES (?, ?, ?, ?)",
+      [expenseData.user_id_gasto, expenseData.group_id, expenseData.amount, expenseData.description]
+    );
+
+    const expenseId = result.insertId;
+    console.log('Gasto insertado con ID:', expenseId);
+
+    console.log('Insertando pagos');
+    const allPercentagesZero = expenseData.participants.every(participant => participant.percentage === 0);
+
+    const paymentPromises = expenseData.participants
+      .filter(participant => participant.percentage > 0 || participant.amount > 0)
+      .map(participant => {
+        const amount = allPercentagesZero ? (expenseData.amount / expenseData.participants.length) : (expenseData.amount * (participant.percentage / 100));
+        return global.db.query(
+          "INSERT INTO pago (expense_id, user_id, user_id_gasto, amount, percentage) VALUES (?, ?, ?, ?, ?)",
+          [expenseId, participant.id, expenseData.user_id_gasto, amount, participant.percentage]
+        );
+      });
     
-      const expenseId = result.insertId;
-      console.log('Gasto insertado con ID:', expenseId);
-    
-      console.log('Insertando pagos');
-      const paymentPromises = expenseData.participants.map(userId => 
-        global.db.query(
-          "INSERT INTO pago (expense_id, user_id, user_id_gasto, amount) VALUES (?, ?, ?, ?)",
-          [expenseId, userId, expenseData.user_id_gasto, expenseData.amount / expenseData.participants.length]
-        )
-      );
-      await Promise.all(paymentPromises);
-    
-      console.log('Pagos insertados exitosamente');
-    
-      return { success: true, expenseId };
-    } catch (error) {
-      console.error(`Error en inserción: ${error} (Intento ${attempt} de ${retryCount})`);
-      
-      if (attempt === retryCount || error.code !== 'ER_LOCK_WAIT_TIMEOUT') {
-        throw error;
-      }
+    await Promise.all(paymentPromises);
+
+    console.log('Pagos insertados exitosamente');
+
+    return { success: true, expenseId };
+  } catch (error) {
+    console.error(`Error en inserción: ${error} (Intento ${retryCount} de ${retryCount})`);
+
+    if (retryCount === 0 || error.code !== 'ER_LOCK_WAIT_TIMEOUT') {
+      throw error;
     }
+    return createGasto(expenseData, retryCount - 1); // Intentar de nuevo
   }
+};
+
 
 
 const getGastoById = async (id) => {
