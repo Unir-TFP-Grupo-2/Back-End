@@ -14,10 +14,10 @@ const getUserIdByEmail = async (email) => {
   return rows.length > 0 ? rows[0].user_id : null;
 };
 
-const addGroupMember = async (groupId, userId, percentage) => {
+const addGroupMember = async (groupId, userId) => {
   const [result] = await db.query(
-    `INSERT INTO grupo_miembro (group_id, user_id, percentage) VALUES (?, ?, ?)`,
-    [groupId, userId, percentage]
+    `INSERT INTO grupo_miembro (group_id, user_id) VALUES (?, ?)`,
+    [groupId, userId]
   );
   return result;
 };
