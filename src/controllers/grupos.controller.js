@@ -9,11 +9,12 @@ const {
   addGroupMember,
 } = require("../models/grupo.model");
 
-
-
 const createGroupHandler = async (req, res) => {
   try {
-    console.log("Contenido completo de req.body:", JSON.stringify(req.body, null, 2));
+    console.log(
+      "Contenido completo de req.body:",
+      JSON.stringify(req.body, null, 2)
+    );
 
     if (!req.body.title) {
       throw new Error("El campo 'title' es requerido");
@@ -21,7 +22,7 @@ const createGroupHandler = async (req, res) => {
 
     const group = await createGroup(req.body);
     if (!group?.insertId) {
-      throw new Error('Error creando el grupo');
+      throw new Error("Error creando el grupo");
     }
 
     console.log("Grupo creado:", group);
@@ -36,23 +37,28 @@ const createGroupHandler = async (req, res) => {
         console.error(`No se encontró userId para el email: ${email}`);
         continue;
       }
-      
-      const addMemberResult = await addGroupMember(group_id, userId, percentage);
+
+      const addMemberResult = await addGroupMember(
+        group_id,
+        userId,
+        percentage
+      );
 
       if (!addMemberResult?.affectedRows) {
-        throw new Error('Error añadiendo miembro al grupo');
+        throw new Error("Error añadiendo miembro al grupo");
       }
 
-      console.log('Resultado de añadir miembro:', addMemberResult);
+      console.log("Resultado de añadir miembro:", addMemberResult);
     }
 
-    res.status(201).json({ group_id, message: "Grupo y miembro creados exitosamente" });
+    res
+      .status(201)
+      .json({ group_id, message: "Grupo y miembro creados exitosamente" });
   } catch (error) {
     console.error("Error en createGroupHandler:", error);
     res.status(500).json({ error: error.message });
   }
 };
-
 
 const getGroupByIdHandler = async (req, res) => {
   try {
@@ -68,13 +74,14 @@ const getGroupByIdHandler = async (req, res) => {
 };
 
 const getAllGroupsHandler = async (req, res) => {
-
   try {
     const userId = req.userId;
     const groups = await getAllGroupsUser(userId);
-    
-     if(groups.length === 0){
-      return res.status(204).json({message:"No hay grupos asociados a este usuario"})
+    console.log(groups);
+    if (groups.length === 0) {
+      return res
+        .status(204)
+        .json({ message: "No hay grupos asociados a este usuario" });
     }
 
     res.json(groups);

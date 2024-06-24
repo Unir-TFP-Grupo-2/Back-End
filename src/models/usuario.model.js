@@ -1,4 +1,4 @@
-const db = require("../config/db");
+//const db = require("../config/db");
 const bcrypt = require("bcryptjs");
 
 const createUser = async (name, lastname, email, photo, hashedPassword) => {
@@ -63,10 +63,9 @@ const deleteUser = async (id) => {
 };
 
 const getUserByEmail = async (email) => {
-  const [rows] = await global.db.query(
-    "SELECT * FROM usuario WHERE email = ?",
-    [email]
-  );
+  const [rows] = await db.query("SELECT * FROM usuario WHERE email = ?", [
+    email,
+  ]);
   return rows[0];
 };
 
@@ -75,6 +74,16 @@ const groupExists = async (groupId) => {
     groupId,
   ]);
   return rows.length > 0;
+};
+
+// Nueva función para actualizar campos específicos del usuario
+const updateUserFields = async (id, fields) => {
+  const setClause = Object.keys(fields)
+    .map((key) => `${key} = ?`)
+    .join(", ");
+  const values = Object.values(fields);
+  values.push(id);
+  await db.query(`UPDATE usuario SET ${setClause} WHERE user_id = ?`, values);
 };
 
 module.exports = {
@@ -86,4 +95,5 @@ module.exports = {
   deleteUser,
   getUserByEmail,
   groupExists,
+  updateUserFields,
 };

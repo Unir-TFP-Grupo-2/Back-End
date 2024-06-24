@@ -5,6 +5,9 @@ const { verifyToken, isAdmin } = require("../../helpers/middlewares");
 
 router.post("/register", userController.registerUser); // Ruta de registro
 router.post("/login", userController.loginUser); // Ruta de login
+router.post("/request-password-reset", userController.requestPasswordReset); // Solicitar restablecimiento de contraseña
+router.post("/reset-password", userController.resetPassword); // Restablecer contraseña
+
 router.get("/", verifyToken, userController.getAllUsersHandler);
 router.get("/:id", verifyToken, userController.getUserByIdHandler);
 router.get("/:id/email", verifyToken, userController.getEmailByUserIdHandler);
@@ -18,5 +21,8 @@ router.delete(
   verifyToken,
   userController.removeUserFromGroup
 );
+
+// Ruta para verificar la contraseña
+router.post("/verify-password", verifyToken, userController.verifyPassword);
 
 module.exports = router;

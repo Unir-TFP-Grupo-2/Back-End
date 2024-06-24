@@ -1,13 +1,16 @@
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
+const { sendEmailHandler } = require("./email.controller");
 const {
   createUser,
+  removeGroupMember,
   getAllUsers,
   getUserById,
   updateUser,
   deleteUser,
   getUserByEmail,
   groupExists,
-  removeGroupMember,
+  updateUserFields,
 } = require("../models/usuario.model");
 const { generateToken } = require("../helpers/utils");
 
@@ -83,6 +86,7 @@ const updateUserHandler = async (req, res) => {
     lastname,
     email,
     photo,
+    password,
     group_id,
     payment_percentage,
     debt,
@@ -99,7 +103,7 @@ const updateUserHandler = async (req, res) => {
     }
     res.status(200).json({ message: "Usuario actualizado" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status[500].json({ error: error.message });
   }
 };
 
@@ -184,6 +188,81 @@ const getEmailByUserIdHandler = async (req, res) => {
   }
 };
 
+const verifyPassword = async (req, res) => {
+  try {
+    const { id, password } = req.body;
+    const user = await getUserById(id);
+    if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: "Contraseña incorrecta" });
+    }
+
+    res.status(200).json({ message: "Contraseña verificada correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const requestPasswordReset = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await getUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+    const resetToken = bcrypt.hashSync(token, 8);
+
+    // Save the token in the database with an expiration time
+    await updateUserFields(user.user_id, {
+      reset_token: resetToken,
+      reset_token_expiration: new Date(Date.now() + 3600000), // 1 hour
+    });
+
+    // enviar email con link
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}&id=${user.user_id}`;
+    const mailOptions = {
+      from: "webmaster@ecuadana.com",
+      to: user.email,
+      subject: "Password Reset",
+      text: `Solicitaste un restablecimiento de contraseña. Haga clic en el siguiente enlace para restablecer su contraseña: ${resetLink}`,
+    };
+
+    await sendEmailHandler({ body: mailOptions }, res);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token, id, newPassword } = req.body;
+    const user = await getUserById(id);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    const tokenIsValid = bcrypt.compareSync(token, user.reset_token);
+    if (!tokenIsValid || Date.now() > new Date(user.reset_token_expiration)) {
+      return res.status(400).json({ message: "Token inválido o expirado" });
+    }
+
+    const hashedPassword = bcrypt.hashSync(newPassword, 8);
+
+    await updateUserFields(user.user_id, {
+      password: hashedPassword,
+      reset_token: null,
+      reset_token_expiration: null,
+    });
+
+    res.status(200).json({ message: "Contraseña actualizada exitosamente" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 module.exports = {
   registerUser,
   getAllUsersHandler,
@@ -194,4 +273,7 @@ module.exports = {
   addUserToGroup,
   removeUserFromGroup,
   getEmailByUserIdHandler,
+  verifyPassword,
+  requestPasswordReset,
+  resetPassword,
 };
