@@ -78,6 +78,7 @@ const getAllGroupsHandler = async (req, res) => {
     const userId = req.userId;
     const groups = await getAllGroupsUser(userId);
     console.log(groups);
+
     if (groups.length === 0) {
       return res
         .status(204)

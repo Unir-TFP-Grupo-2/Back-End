@@ -1,6 +1,6 @@
 @PORT = 3000
 @HOST = http://localhost:{{PORT}}
-@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjUsImVtYWlsIjoiZGllZ28ub3JAZ21haWwuY29tIiwiaWF0IjoxNzE5MTg0MTc4LCJleHAiOjE3MTkyNzA1Nzh9.PjtjrbRgRoXL94JJ4VZPnu_m574mJ8yMk2VpmdUCcMc
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTcxODkxMTE5OCwiZXhwIjoxNzE4OTk3NTk4fQ.Ut9aKzX52Pq7JTzfjMJih7LEtaXvXORAdVesF8n5tDM
 
 ### Registro de un nuevo usuario independiente
 POST {{HOST}}/api/usuarios/register
@@ -20,8 +20,8 @@ POST {{HOST}}/api/usuarios/login
 Content-Type: application/json
 
 {
-  "email": "diego.or@gmail.com",
-  "password": "Usuario123"
+  "email": "admin@example.com",
+  "password": "nuevapassword"
 }
 
 ### OBTENER TODOS LOS USUARIOS
