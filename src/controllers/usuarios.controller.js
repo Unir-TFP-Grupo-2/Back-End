@@ -89,9 +89,7 @@ const updateUserHandler = async (req, res) => {
     debt,
   };
 
-  if (password) {
-    updateData.password = bcrypt.hashSync(password, 8);
-  }
+  
 
   try {
     const result = await updateUser(req.params.id, updateData);
