@@ -1,6 +1,6 @@
 @PORT = 3000
 @HOST = http://localhost:{{PORT}}
-@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiZW1haWwiOiJwZWRyb0BnbWFpbC5jb20iLCJpYXQiOjE3MTg5OTA3ODMsImV4cCI6MTcxOTA3NzE4M30.pUEctlWGy7gpE_f_EB1-BtQtA4vlhz_ZxqLWLk8kF5s
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsImVtYWlsIjoidmdvbWV6QGdtYWlsLmNvbSIsImlhdCI6MTcxOTIyMDEwNiwiZXhwIjoxNzE5MzA2NTA2fQ.MsjHKxxqmkuYX1ZQ6EnG-kvBpfDN28-o9ikFCd3859c
 
 ### Registro de un nuevo usuario independiente
 POST {{HOST}}/api/usuarios/register
@@ -20,8 +20,8 @@ POST {{HOST}}/api/usuarios/login
 Content-Type: application/json
 
 {
-  "email": "pedro@gmail.com",
-  "password": "12345"
+  "email": "vgomez@gmail.com",
+  "password": "1234567"
 }
 
 ### OBTENER TODOS LOS USUARIOS
@@ -29,20 +29,21 @@ GET {{HOST}}/api/usuarios
 Authorization: Bearer {{TOKEN}}
 
 ### Obtener un usuario por ID
-GET {{HOST}}/api/usuarios/1
+GET {{HOST}}/api/usuarios/27
 Authorization: Bearer {{TOKEN}}
 
 ### Actualizar un usuario
-PUT {{HOST}}/api/usuarios/2
+PUT {{HOST}}/api/usuarios/27
 Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
 
 {
   "name": "Usuario Actualizado",
   "lastname": "Apellido Actualizado",
-  "email": "actualizado@example.com",
+  "email": "vgomez@gmail.com",
   "photo": "url_actualizada_de_la_foto",
-  "password": "nuevapasswordactualizada"
+  "url_photo": "url_actualizada_de_la_foto",
+  "password": "1234567"
 }
 
 ### Eliminar un usuario

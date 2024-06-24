@@ -35,25 +35,27 @@ const updateUser = async (id, updateData) => {
     lastname,
     email,
     photo,
+    url_photo,
     password,
     group_id,
     payment_percentage,
     debt,
   } = updateData;
   let query =
-    "UPDATE usuario SET name = ?, lastname = ?, email = ?, photo = ? WHERE user_id = ?";
-  let updateFields = [name, lastname, email, photo, id];
+    "UPDATE usuario SET name = ?, lastname = ?, email = ?, photo = ?,url_photo = ? WHERE user_id = ?";
+  let updateFields = [name, lastname, email, photo, url_photo, id];
 
   if (password) {
     const hashedPassword = await bcrypt.hash(password, 8);
     query =
-      "UPDATE usuario SET name = ?, lastname = ?, email = ?, photo = ?, password = ? WHERE user_id = ?";
-    updateFields = [name, lastname, email, photo, hashedPassword, id];
+      "UPDATE usuario SET name = ?, lastname = ?, email = ?, photo = ?,url_photo = ?, password = ? WHERE user_id = ?";
+    updateFields = [name, lastname, email, photo, url_photo, hashedPassword, id];
   }
 
   const [result] = await db.query(query, updateFields);
   return result;
 };
+
 
 const deleteUser = async (id) => {
   const [result] = await db.query("DELETE FROM usuario WHERE user_id = ?", [
