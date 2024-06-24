@@ -170,9 +170,48 @@ const updateGroup = async (id, groupData) => {
 };
 
 const deleteGroup = async (id) => {
-  const [result] = await db.query(`DELETE FROM grupo WHERE group_id = ?`, [id]);
-  return result;
+  try {
+    await db.query('START TRANSACTION');
+
+    await db.query('SET FOREIGN_KEY_CHECKS = 0');
+
+    const grupoIdQuery = 'SELECT group_id FROM grupo WHERE group_id = ?';
+    const [grupoIdRows] = await db.query(grupoIdQuery, [id]);
+
+    if (grupoIdRows.length > 0) {
+      const grupoId = grupoIdRows[0].group_id;
+
+      const deletePagosQuery = 'DELETE FROM pago WHERE expense_id IN (SELECT expense_id FROM gasto WHERE group_id = ?)';
+      await db.query(deletePagosQuery, [grupoId]);
+
+      const deleteGastosQuery = 'DELETE FROM gasto WHERE group_id = ?';
+      await db.query(deleteGastosQuery, [grupoId]);
+
+      const deleteGrupoMiembroQuery = 'DELETE FROM grupo_miembro WHERE group_id = ?';
+      await db.query(deleteGrupoMiembroQuery, [grupoId]);
+
+      const deleteGrupoQuery = 'DELETE FROM grupo WHERE group_id = ?';
+      const [result] = await db.query(deleteGrupoQuery, [grupoId]);
+
+      await db.query('SET FOREIGN_KEY_CHECKS = 1');
+
+      await db.query('COMMIT');
+
+      console.log(result); 
+
+      return result;
+    } else {
+      throw new Error(`No se encontró ningún grupo con ID ${id}`);
+    }
+  } catch (error) {
+    await db.query('ROLLBACK');
+    console.error("Error en deleteGroup:", error);
+    throw error;
+  }
 };
+
+
+
 
 module.exports = {
   createGroup,
