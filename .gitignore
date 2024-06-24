@@ -4,3 +4,4 @@ node_modules/
 # dotenv variable de entorno
 .env
 
+src/uploads/*

@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
   "email": "vgomez@gmail.com",
-  "password": "1234567"
+  "password": "123456789"
 }
 
 ### OBTENER TODOS LOS USUARIOS
@@ -41,7 +41,6 @@ Authorization: Bearer {{TOKEN}}
   "name": "Usuario Actualizado",
   "lastname": "Apellido Actualizado",
   "email": "vgomez@gmail.com",
-  "photo": "url_actualizada_de_la_foto",
   "url_photo": "url_actualizada_de_la_foto",
   "password": "1234567"
 }
