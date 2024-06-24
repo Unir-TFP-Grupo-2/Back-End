@@ -33,16 +33,16 @@ GET {{HOST}}/api/usuarios/25
 Authorization: Bearer {{TOKEN}}
 
 ### Actualizar un usuario
-PUT {{HOST}}/api/usuarios/2
+PUT {{HOST}}/api/usuarios/27
 Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
 
 {
   "name": "Usuario Actualizado",
   "lastname": "Apellido Actualizado",
-  "email": "actualizado@example.com",
-  "photo": "url_actualizada_de_la_foto",
-  "password": "nuevapasswordactualizada"
+  "email": "vgomez@gmail.com",
+  "url_photo": "url_actualizada_de_la_foto",
+  "password": "1234567"
 }
 
 ### Eliminar un usuario

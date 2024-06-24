@@ -75,7 +75,7 @@ const updateUserHandler = async (req, res) => {
     name,
     lastname,
     email,
-    photo,
+    photo_url,
     password,
     group_id,
     payment_percentage,
@@ -85,16 +85,14 @@ const updateUserHandler = async (req, res) => {
     name,
     lastname,
     email,
-    photo,
+    photo_url,
     password,
     group_id,
     payment_percentage,
     debt,
   };
 
-  if (password) {
-    updateData.password = bcrypt.hashSync(password, 8);
-  }
+  
 
   try {
     const result = await updateUser(req.params.id, updateData);

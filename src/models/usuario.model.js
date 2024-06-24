@@ -34,21 +34,21 @@ const updateUser = async (id, updateData) => {
     name,
     lastname,
     email,
-    photo,
+    photo_url,
     password,
     group_id,
     payment_percentage,
     debt,
   } = updateData;
   let query =
-    "UPDATE usuario SET name = ?, lastname = ?, email = ?, photo = ? WHERE user_id = ?";
-  let updateFields = [name, lastname, email, photo, id];
+    "UPDATE usuario SET name = ?, lastname = ?, email = ?, url_photo = ? WHERE user_id = ?";
+  let updateFields = [name, lastname, email, photo_url, id];
 
   if (password) {
     const hashedPassword = await bcrypt.hash(password, 8);
     query =
-      "UPDATE usuario SET name = ?, lastname = ?, email = ?, photo = ?, password = ? WHERE user_id = ?";
-    updateFields = [name, lastname, email, photo, hashedPassword, id];
+      "UPDATE usuario SET name = ?, lastname = ?, email = ?, url_photo = ?, password = ? WHERE user_id = ?";
+    updateFields = [name, lastname, email, photo_url, hashedPassword, id];
   }
 
   const [result] = await db.query(query, updateFields);
