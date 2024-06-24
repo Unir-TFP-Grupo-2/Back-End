@@ -221,7 +221,7 @@ const requestPasswordReset = async (req, res) => {
     });
 
     // enviar email con link
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}&id=${user.user_id}`;
+    const resetLink = `${process.env.FRONTEND_URL}?token=${token}&id=${user.user_id}`;
     const mailOptions = {
       from: "webmaster@ecuadana.com",
       to: user.email,

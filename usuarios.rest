@@ -66,7 +66,7 @@ POST {{HOST}}/api/usuarios/request-password-reset
 Content-Type: application/json
 
 {
-  "email": "diego.or@gmail.com"
+  "email": "viictorluquem@gmail.com"
 }
 
 ### Restablecer contraseña
